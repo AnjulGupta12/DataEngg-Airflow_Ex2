@@ -6,6 +6,7 @@ def data_processing(date):
     spark = SparkSession.builder.appName("DataprocOrderProcessing").getOrCreate()
 
     # Define the path where the files are located
+    # replacing {date} with the passed argument, this prevents hardcoding and allows processing unique daily files
     input_path = f"gs://airflow-test-projects-gds-dev/airflow-project-2/data/orders_{date}.csv"
     
     # Read CSV files
@@ -21,8 +22,10 @@ def data_processing(date):
     spark.stop()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Process date argument')
-    parser.add_argument('--date', type=str, required=True, help='Date in yyyymmdd format')
-    args = parser.parse_args()
-    
+    parser = argparse.ArgumentParser(description='Process date argument')      # Create parser object to read command-line inputs passed by Airflow
+    parser.add_argument('--date', type=str, required=True, help='Date in yyyymmdd format') # Defines the required '--date' flag. If the Airflow Dataproc task runs this script, it captures the provided date string
+    args = parser.parse_args()      # Parse the actual command executed
+
+
+     # Call data_processing function passing the captured date argument
     data_processing(args.date)
