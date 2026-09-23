@@ -12,12 +12,19 @@ The workflow is orchestrated by `airflow_orders_job.py` and executes in two prim
 
 1.  **Task 1: Get Execution Date (`get_execution_date`)**
     *   A Python task extracts the user-provided date from the Airflow run parameters (`execution_date`).
+      
     *   **Condition A:** If the user provides a specific date in `YYYYMMDD` format, the task fetches that date.
+      <p align="center"> <img width="1914" height="657" alt="value" src="https://github.com/user-attachments/assets/134734ac-6715-41b5-b8fc-3616ca7bdb72" /></p>
+
     *   **Condition B:** If no input is provided (defaults to `"NA"`), it automatically falls back to the Airflow current execution date (`ds_nodash`).
+       <p align="center"> <img width="1905" height="604" alt="Enter_Variable" src="https://github.com/user-attachments/assets/ababe490-6030-4836-bb59-7135e9e447d3" /></p>
+
 2.  **Task 2: Submit Spark Job (`submit_pyspark_job`)**
     *   Airflow pulls the resolved date from Task 1 using XComs.
     *   It submits the `orders_data_process.py` script to a running Dataproc cluster, passing the date dynamically as an argument (`--date=YYYYMMDD`).
     *   The PySpark job reads the corresponding daily file, filters for `order_status == "Completed"`, and writes the output back to GCS.
+<p align="center"><img width="532" height="856" alt="project2" src="https://github.com/user-attachments/assets/c564c983-4ecb-4a22-998f-d6dbe5c6b5eb" /></p>
+
 
 ## Cloud Storage (GCS) Structure
 
@@ -62,12 +69,14 @@ Because this DAG runs on an *existing* Dataproc cluster, you must configure the 
           "REGION": "us-central1"
         }
         ```
+<p align="center"><img width="1919" height="536" alt="Varibles" src="https://github.com/user-attachments/assets/ca60b10a-0819-462e-b775-11564c459246" /></p>
 
 **Step 3: Deploy the DAG**
 *   Upload `airflow_orders_job.py` into the `dags/` folder of your Airflow environment bucket.
 
 **Step 4: DAG Registration**
 *   Airflow's scheduler will automatically pick up the new file. Once parsed, the `orders_data_backfilling_dag` will appear on the Airflow Web UI.
+<p align="center"><img width="1919" height="644" alt="DAG" src="https://github.com/user-attachments/assets/ebb29a1d-2e50-4fbd-a4b0-004dd40ab1e3" /></p>
 
 **Step 5: Trigger the Pipeline**
 *   **Automatic:** If scheduled, it will run automatically using the current system date.
@@ -75,3 +84,4 @@ Because this DAG runs on an *existing* Dataproc cluster, you must configure the 
     ```json
     {"execution_date": "20260922"}
     ```
+<p align="center"><img width="1919" height="861" alt="success" src="https://github.com/user-attachments/assets/8331d37e-f32e-4527-af93-381c5f7c5bf9" /></p>
