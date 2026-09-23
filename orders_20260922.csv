@@ -1,0 +1,5 @@
+order_id,product,quantity,order_status,order_date
+1,Keyboard,2,Completed,2025-09-12
+2,Mouse,1,Pending,2025-09-12
+3,Monitor,1,Completed,2025-09-12
+4,Laptop,1,Failed,2025-09-12
